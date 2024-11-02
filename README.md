@@ -80,13 +80,17 @@ This project is configured to work with [Vercel](https://vercel.com/). You can d
 
 ### Vercel ISR
 
-The project uses the following caching headers for ISR:
+This project uses Vercel’s ISR to automatically revalidate content. The ISR configuration is set directly in SvelteKit’s load functions using the config export with the following settings:
 
-- **Cache-Control**: `s-maxage=300, stale-while-revalidate=600`
-  - **`s-maxage=300`**: Cache the page for 5 minutes.
-  - **`stale-while-revalidate=600`**: Serve stale content for up to 10 minutes while revalidating in the background.
+```export const config = {
+isr: {
+    expiration: 60, // 1-minute revalidation interval
+  },
+};
+```
 
-These headers are set in the SvelteKit `load` functions, and Vercel will handle ISR automatically.
+
+This tells Vercel to revalidate the page every 60 seconds, ensuring fresh content while minimizing server load.
 
 ## Usage and Configuration
 
