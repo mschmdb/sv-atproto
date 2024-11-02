@@ -2,6 +2,9 @@
 
 This repository hosts a SvelteKit 5 blog project that integrates with the AT Protocol to fetch and display blog posts. The project uses Vercel's Incremental Static Regeneration (ISR) to ensure blog content remains fresh without requiring full redeployments. 
 
+> [!IMPORTANT]  
+> **This repository is still under development.** Basic functionalities are in place, but additional features are actively being worked on.
+
 ## Features
 
 - **SvelteKit 5** for modern frontend development.
