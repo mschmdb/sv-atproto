@@ -8,7 +8,6 @@ export const config = {
 
 export async function load() {
     const blogs = await getPosts();
-    console.log(blogs);
 
 
     return {
