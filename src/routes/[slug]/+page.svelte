@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { marked } from 'marked'; // Import marked for Markdown parsing
-	import { Image } from '@unpic/svelte';
+	import { marked, Renderer } from 'marked';
+	import MarkdownImage from '$lib/components/MarkdownImage.svelte';
 	$inspect($page);
 
 	// Retrieve the blog post data from SSR state
@@ -14,11 +14,18 @@
 		return match ? match[1] : null;
 	}
 
-	// Get the image URL if it exists, but keep the original content unchanged
+	// Get the first image URL to display as the header image if available
 	const blogImage = extractFirstImage(blog.content);
 
-	// Parse the content as HTML using marked
-	const parsedContent = marked(blog.content);
+	// Custom renderer for marked to replace images with <MarkdownImage /> component placeholders
+	const renderer = new Renderer();
+	renderer.image = ({ href, title, text }) => {
+		// Replace image markdown with a placeholder component marker
+		return `<markdown-image src="${href}" alt="${text || ''}"></markdown-image>`;
+	};
+
+	// Parse the blog content using the custom renderer
+	const parsedContent = marked(blog.content, { renderer });
 </script>
 
 <main class="min-h-screen bg-gray-100 p-8">
@@ -27,17 +34,10 @@
 
 		<!-- Display the extracted blog image at the top if available -->
 		{#if blogImage}
-			<Image
-				src={blogImage}
-				layout="constrained"
-				alt="Blog image"
-				width={800}
-				height={600}
-				class="mb-6 h-64 w-full rounded-md object-cover"
-			/>
+			<MarkdownImage src={blogImage} alt="Blog image" />
 		{/if}
 
-		<!-- Render the parsed content as HTML -->
+		<!-- Render the parsed content and replace placeholders with components -->
 		<div class="prose prose-blue mb-4 max-w-none">
 			{@html parsedContent}
 		</div>
@@ -47,3 +47,14 @@
 		</p>
 	</article>
 </main>
+
+<!-- Replace markdown-image placeholders with actual MarkdownImage components -->
+<svelte:head>
+	<script>
+		document.querySelectorAll('markdown-image').forEach(node => {
+			const src = node.getAttribute('src');
+			const alt = node.getAttribute('alt');
+			const imageComponent = new MarkdownImage({ target: node, props: { src, alt } });
+		});
+	</script>
+</svelte:head>
