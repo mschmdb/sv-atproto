@@ -2,7 +2,7 @@ import { getPosts } from '$lib/atprotoClient';
 
 export const config = {
     isr: {
-        expiration: 60,
+        expiration: 300,
     },
 };
 
